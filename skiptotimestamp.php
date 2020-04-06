@@ -68,28 +68,43 @@ function qed_stt_shortcode($attr, $content) {
 		$time = $attr['ts'];
 	}
 	
+	$mediaIdAttribute = 'media-id';
 	$mediaId = -1;
-	if (isset($attr['media-id'])) {
-		$mediaId = $attr['media-id'];
+	if (isset($attr[$mediaIdAttribute])) {
+		$mediaId = $attr[$mediaIdAttribute];
 	}
 	
+	$mediaTypeAttribute = 'media-type';
 	$mediaType = -1;
-	if (isset($attr['media-type'])) {
-		$mediaType = $attr['media-type'];
+	if (isset($attr[$mediaTypeAttribute])) {
+		$mediaType = $attr[$mediaTypeAttribute];
+	}
+
+	$urlMediaContainsAttribute = 'url-media-contains';
+	$urlMediaContains = -1;
+	if (isset($attr[$urlMediaContainsAttribute])) {
+		$urlMediaContains = $attr[$urlMediaContainsAttribute];
 	}
 
 	if ($time == -1) {
 		return $content;
 	} else {
-	    if ($mediaId == -1 && $mediaType == -1) {
-		    return "<a href=\"javascript:void(0)\" class=\"qed_stt_tslink\" data-stt-time=\"{$time}\">{$content}</a>";
-	    } else {
-	        if ($mediaType == -1) {
-	            return "<a href=\"javascript:void(0)\" class=\"qed_stt_tslink\" data-stt-time=\"{$time}\" media-id=\"{$mediaId}\">{$content}</a>";
-	        } else {
-	            return "<a href=\"javascript:void(0)\" class=\"qed_stt_tslink\" data-stt-time=\"{$time}\" media-id=\"{$mediaId}\" media-type=\"{$mediaType}\">{$content}</a>";
-	        }
-	    }
+		$tagStart = "<a href=\"javascript:void(0)\" class=\"qed_stt_tslink\" data-stt-time=\"{$time}\"";
+		$tagEnd = ">{$content}</a>";
+		
+		$tagMedia = "";
+		if ($urlMediaContains != -1) {
+			$tagMedia = " {$urlMediaContainsAttribute}=\"{$urlMediaContains}\"";
+		} else if ($mediaId != -1) {
+			$tagMedia = " {$mediaIdAttribute}=\"{$mediaId}\"";
+		}
+		
+		$tagMediaType = "";
+		if (($mediaId != -1 || $urlMediaContains != -1) && $mediaType != -1) {
+			$tagMediaType = " {$mediaTypeAttribute}=\"{$mediaType}\"";
+		}
+		
+		return $tagStart . $tagMedia . $tagMediaType . $tagEnd;
 	}
 }
 
